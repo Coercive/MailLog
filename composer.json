@@ -1,0 +1,31 @@
+{
+    "name": "coercive/maillog",
+    "type": "library",
+    "description": "Coercive Utility MailLog",
+    "homepage": "http://coercive.fr",
+    "license": "MIT",
+    "licenses": [{
+      "type": "MIT",
+      "url": "https://github.com/Coercive/MailLog/blob/master/LICENSE.txt"
+    }],
+    "authors": [
+        {
+            "name": "Anthony Moral",
+            "email": "contact@coercive.fr",
+            "homepage": "http://coercive.fr"
+        }
+    ],
+    "require": {
+      "php": ">=7.1"
+    },
+    "require-dev": {},
+    "autoload": {
+        "psr-4": { "Coercive\\Utility\\MailLog\\": "/dist" }
+    },
+    "minimum-stability" : "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
