@@ -119,6 +119,11 @@ class PostfixBL
 			$cmd = 'grep -E ".+' . $this->server . '.+ ' . $id . ': .+" ' . $this->path;
 			$raw = shell_exec($cmd);
 
+			# Verify if status=bounce is present
+			if(!strpos($raw, ' status=' . self::STATUS_BOUNCED) {
+				continue;
+			}
+
 			# Transform shell lines to array
 			$rows = explode(PHP_EOL, $raw);
 
