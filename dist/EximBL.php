@@ -63,7 +63,7 @@ class EximBL
 	 */
 	private function grep()
 	{
-		$this->raw = shell_exec('grep " \*\* .*@.*" ' . $this->path);
+		$this->raw = shell_exec('grep -E " \*\* [^ ]+@[^ ]+" ' . $this->path);
 	}
 
 	/**
