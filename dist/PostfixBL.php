@@ -120,7 +120,7 @@ class PostfixBL
 			$raw = shell_exec($cmd);
 
 			# Verify if status=bounce is present
-			if(!strpos($raw, ' status=' . self::STATUS_BOUNCED) {
+			if(!strpos($raw, ' status=' . self::STATUS_BOUNCED)) {
 				continue;
 			}
 
