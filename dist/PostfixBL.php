@@ -16,10 +16,12 @@ use Exception;
 class PostfixBL
 {
 	const DAEMON_SMTPD = 'postfix/smtpd';
+	const DAEMON_CLEANUP = 'postfix/cleanup';
 	const DAEMON_QMGR = 'postfix/qmgr';
 	const DAEMON_SMTP = 'postfix/smtp';
 
-	const REGEXP_IDS = '^(?P<date>[a-zA-Z]+ \d+) (?P<time>[0-9]{2}:[0-9]{2}:[0-9]{2}) (?P<server>@SERVER@) (?P<daemon>@DAEMON_SMTPD@)\[\d+\]: (?P<id>[A-Z0-9]+): (?P<client>@CLIENT@).*$';
+	const REGEXP_IDS = '^(?P<date>[a-zA-Z]+ \d+) (?P<time>[0-9]{2}:[0-9]{2}:[0-9]{2}) (?P<server>@SERVER@) (?P<daemon>@DAEMON_SMTPD@)\[\d+\]: (?P<id>[A-Z0-9]+): client=(?P<client>@CLIENT@).*$';
+	const REGEXP_SOURCE = '^.+ @DAEMON_CLEANUP@\[\d+\]: @ID@: .*message-id=\<[^ ]+@(?P<source>[^ ]+)\>.*$';
 	const REGEXP_FROM = '^.+ @DAEMON_QMGR@\[\d+\]: @ID@: .*from=\<(?P<email>[^ ]+@[^ ]+)\>,.+$';
 	const REGEXP_SEND = '^.+ @DAEMON_SMTP@\[\d+\]: @ID@:.* to=\<(?P<to>[^ ]+@[^ ]+)\>, (?:orig_to=\<(?P<orig_to>[^ ]+@[^ ]+)\>, )?.*status=(?P<status>[a-z]+) .*$';
 	const REGEXP_END = '^.+ @DAEMON_QMGR@\[\d+\]: @ID@:.* removed$';
@@ -31,6 +33,7 @@ class PostfixBL
 
 	# Prepared regexp
 	private $REGEXP_IDS = '';
+	private $REGEXP_SOURCE = '';
 	private $REGEXP_FROM = '';
 	private $REGEXP_SEND = '';
 	private $REGEXP_END = '';
@@ -64,10 +67,12 @@ class PostfixBL
 			'@SERVER@' => $this->server,
 			'@CLIENT@' => $this->client,
 			'@DAEMON_SMTPD@' => preg_quote(self::DAEMON_SMTPD, '`'),
+			'@DAEMON_CLEANUP@' => preg_quote(self::DAEMON_CLEANUP, '`'),
 			'@DAEMON_QMGR@' => preg_quote(self::DAEMON_QMGR, '`'),
 			'@DAEMON_SMTP@' => preg_quote(self::DAEMON_SMTP, '`'),
 		];
 		$this->REGEXP_IDS = str_replace(array_keys($search), array_values($search), self::REGEXP_IDS);
+		$this->REGEXP_SOURCE = str_replace(array_keys($search), array_values($search), self::REGEXP_SOURCE);
 		$this->REGEXP_FROM = str_replace(array_keys($search), array_values($search), self::REGEXP_FROM);
 		$this->REGEXP_SEND = str_replace(array_keys($search), array_values($search), self::REGEXP_SEND);
 		$this->REGEXP_END = str_replace(array_keys($search), array_values($search), self::REGEXP_END);
@@ -82,7 +87,7 @@ class PostfixBL
 	{
 		# Grep log file
 		$daemon = preg_quote(self::DAEMON_SMTPD, '`');
-		$cmd = 'grep -E ".+' . $this->server . '.+' . $daemon . '.+' . $this->client . '" ' . $this->path;
+		$cmd = 'grep -E ".+' . $this->server . '.+' . $daemon . '\[[0-9]+\]:.+[A-Z0-9]+:.+' . $this->client . '" ' . $this->path;
 		$raw = shell_exec($cmd);
 
 		# Transform shell lines to array
@@ -124,6 +129,7 @@ class PostfixBL
 
 			# Save full data and init entries
 			$this->list[$id]['raw'] = $raw;
+			$this->list[$id]['source'] = '';
 			$this->list[$id]['from'] = '';
 			$this->list[$id]['smtp'] = [];
 			$this->list[$id]['end'] = false;
@@ -140,6 +146,12 @@ class PostfixBL
 					$this->list[$id]['from'] = $matches['email'];
 				}
 
+				# Detection of source
+				$regexp = str_replace('@ID@', $id, $this->REGEXP_SOURCE);
+				if(preg_match('`' . $regexp . '`', $row, $matches)) {
+					$this->list[$id]['source'] = $matches['source'];
+				}
+
 				# Detection of real send
 				$regexp = str_replace('@ID@', $id, $this->REGEXP_SEND);
 				if(preg_match('`' . $regexp . '`', $row, $matches)) {
@@ -147,13 +159,13 @@ class PostfixBL
 					# Add to full list
 					$this->list[$id]['smtp'][] = [
 						'to' => $matches['to'],
-						'orig_to' => $matches['orig_to'] ?? '',
+						'orig_to' => $matches['orig_to'],
 						'status' => $matches['status']
 					];
 
 					# Add to rejected list if debounce
 					if($matches['status'] === self::STATUS_BOUNCED) {
-						$email = $matches['orig_to'] ?? $matches['to'];
+						$email = $matches['orig_to'] ?: $matches['to'];
 						$this->rejected[$id] = $email;
 					}
 
