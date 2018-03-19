@@ -303,6 +303,9 @@ class PostfixBL
 	 */
 	public function parse(bool $blacklist = false, int $offset = 0, int $limit = 0): PostfixBL
 	{
+		# Autosearch basic smtpd
+		if(!$this->daemon) { $this->search(); }
+
 		# Parse ids
 		$this->prepareIds($offset, $limit);
 
