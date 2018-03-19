@@ -24,7 +24,14 @@ $postfix = new PostfixBL(
 	'name0123'
 );
 
+# Set your search client
+$postfix->search('no-reply\@my-domain\.email', PostfixBL::DAEMON_PICKUP);
+
+# Parse options
+$postfix->parse(true, 0, 10);
+
 echo "<pre>";
+var_dump($postfix->getIds());
 var_dump($postfix->getFullDatas());
 var_dump($postfix->getRejectedEmails());
 
