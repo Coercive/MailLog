@@ -64,6 +64,9 @@ class PostfixBL
 
 	/** @var string Id of the postfix server */
 	private $server = '';
+	
+	/** @var string Status searched for retrieve id list */
+	private $status = self::STATUS_BOUNCED;
 
 	/** @var array ID list from */
 	private $ids = [];
@@ -71,8 +74,8 @@ class PostfixBL
 	/** @var array All item list */
 	private $list = [];
 
-	/** @var array Rejected list */
-	private $rejected = [];
+	/** @var array Emails list */
+	private $emails = [];
 
 	/**
 	 * Replace basics @ TAGS @ in regexp
@@ -147,7 +150,7 @@ class PostfixBL
 	 *
 	 * @return void
 	 */
-	private function prepareBlackList()
+	private function prepareList()
 	{
 		# No datas
 		if(!$this->ids) { return; }
@@ -159,8 +162,8 @@ class PostfixBL
 			$cmd = 'grep -E ".+' . $this->server . '.+ ' . $id . ': .+" ' . $this->path;
 			$raw = shell_exec($cmd);
 
-			# Verify if status=bounce is present
-			if(!strpos($raw, ' status=' . self::STATUS_BOUNCED)) {
+			# Verify if status= is present
+			if(!strpos($raw, ' status=' . $this->status)) {
 				continue;
 			}
 
@@ -203,10 +206,10 @@ class PostfixBL
 						'status' => $matches['status']
 					];
 
-					# Add to rejected list if debounce
-					if($matches['status'] === self::STATUS_BOUNCED) {
+					# Add to emails list if status match
+					if($matches['status'] === $this->status) {
 						$email = $matches['orig_to'] ?: $matches['to'];
-						$this->rejected[$id] = $email;
+						$this->emails[$id] = $email;
 					}
 
 				}
@@ -296,21 +299,25 @@ class PostfixBL
 	/**
 	 * Launch datas parsing
 	 *
-	 * @param bool $blacklist [optional]
+	 * @param string $status [optional]
+	 * @param bool $list [optional]
 	 * @param int $offset [optional]
 	 * @param int $limit [optional]
 	 * @return $this
 	 */
-	public function parse(bool $blacklist = false, int $offset = 0, int $limit = 0): PostfixBL
+	public function parse(string $status = self::STATUS_BOUNCED, bool $list = false, int $offset = 0, int $limit = 0): PostfixBL
 	{
 		# Autosearch basic smtpd
 		if(!$this->daemon) { $this->search(); }
+
+		# Searched status
+		$this->status = $status;
 
 		# Parse ids
 		$this->prepareIds($offset, $limit);
 
 		# Parse for blacklist
-		if($blacklist) { $this->prepareBlackList(); }
+		if($list) { $this->prepareList(); }
 
 		# Maintain chainability
 		return $this;
@@ -331,19 +338,19 @@ class PostfixBL
 	 *
 	 * @return array
 	 */
-	public function getFullDatas(): array
+	public function getDatas(): array
 	{
 		return $this->list;
 	}
 
 	/**
-	 * Return rejected list
+	 * Return email list
 	 *
 	 * @param bool $distinct Only unique email
 	 * @return array
 	 */
-	public function getRejectedEmails(bool $distinct = false): array
+	public function getEmails(bool $distinct = false): array
 	{
-		return $distinct ? array_unique($this->rejected) : $this->rejected;
+		return $distinct ? array_unique($this->emails) : $this->emails;
 	}
 }
