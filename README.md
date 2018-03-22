@@ -28,14 +28,14 @@ $postfix = new PostfixBL(
 $postfix->search('no-reply\@my-domain\.email', PostfixBL::DAEMON_PICKUP);
 
 # Parse options
-$postfix->parse(true, 0, 10);
+$postfix->parse('bounced', true, 0, 10);
 
 echo "<pre>";
 var_dump($postfix->getIds());
-var_dump($postfix->getFullDatas());
-var_dump($postfix->getRejectedEmails());
+var_dump($postfix->getDatas());
+var_dump($postfix->getEmails());
 
 # Distinct emails
-var_dump($postfix->getRejectedEmails(true));
+var_dump($postfix->getEmails(true));
 echo "</pre>";
 ```
