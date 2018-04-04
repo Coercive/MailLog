@@ -233,7 +233,7 @@ class PostfixBL
 	public function __construct(string $path = '/var/log/mail.log', string $server = '[a-z0-9]+')
 	{
 		# Verify access to log file
-		if(!is_file($path) && is_readable($path)) {
+		if(!is_file($path) || !is_readable($path)) {
 			throw new Exception("Can't access log file in : $path");
 		}
 
