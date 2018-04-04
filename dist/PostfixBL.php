@@ -299,13 +299,13 @@ class PostfixBL
 	/**
 	 * Launch datas parsing
 	 *
-	 * @param string $status [optional]
 	 * @param bool $list [optional]
+	 * @param string $status [optional]
 	 * @param int $offset [optional]
 	 * @param int $limit [optional]
 	 * @return $this
 	 */
-	public function parse(string $status = self::STATUS_BOUNCED, bool $list = false, int $offset = 0, int $limit = 0): PostfixBL
+	public function parse(bool $list = false, string $status = self::STATUS_BOUNCED, int $offset = 0, int $limit = 0): PostfixBL
 	{
 		# Autosearch basic smtpd
 		if(!$this->daemon) { $this->search(); }
