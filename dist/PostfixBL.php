@@ -23,11 +23,11 @@ class PostfixBL
 	const DAEMON_QMGR = 'postfix/qmgr';
 	const DAEMON_SMTP = 'postfix/smtp';
 
-	const REGEXP_IDS_SMTPD = '^(?:[a-zA-Z]+\s\d+)\s+(?:[0-9]{2}:[0-9]{2}:[0-9]{2})\s+(?:@SERVER@)\s+(?:@DAEMON_SMTPD@)\[\d+\]:\s+(?P<id>[A-Z0-9]+):\s+client=(?:@SEARCH@).*$';
-	const REGEXP_IDS_PICKUP = '^(?:[a-zA-Z]+\s\d+)\s+(?:[0-9]{2}:[0-9]{2}:[0-9]{2})\s+(?:@SERVER@)\s+(?:@DAEMON_PICKUP@)\[\d+\]:\s+(?P<id>[A-Z0-9]+):\s+.*from=\<(?:@SEARCH@)\>.*$';
-	const REGEXP_IDS_CLEANUP = '^(?:[a-zA-Z]+\s\d+)\s+(?:[0-9]{2}:[0-9]{2}:[0-9]{2})\s+(?:@SERVER@)\s+(?:@DAEMON_CLEANUP@)\[\d+\]:\s+(?P<id>[A-Z0-9]+):\s+message-id=\<[^ ]+@(?:@SEARCH@)\>.*$';
-	const REGEXP_IDS_OPENDKIM = '^(?:[a-zA-Z]+\s\d+)\s+(?:[0-9]{2}:[0-9]{2}:[0-9]{2})\s+(?:@SERVER@)\s+(?:@DAEMON_OPENDKIM@)\[\d+\]:\s+(?P<id>[A-Z0-9]+):\s+.*\(.*(?:@SEARCH@).*\).*$';
-	const REGEXP_IDS_QMGR = '^(?:[a-zA-Z]+\s\d+)\s+(?:[0-9]{2}:[0-9]{2}:[0-9]{2})\s+(?:@SERVER@)\s+(?:@DAEMON_QMGR@)\[\d+\]:\s+(?P<id>[A-Z0-9]+):\s+.*from=\<(?:@SEARCH@)\>.*$';
+	const REGEXP_IDS_SMTPD = '^(?:[a-zA-Z]+\s+\d+)\s+(?:[0-9]{2}:[0-9]{2}:[0-9]{2})\s+(?:@SERVER@)\s+(?:@DAEMON_SMTPD@)\[\d+\]:\s+(?P<id>[A-Z0-9]+):\s+client=(?:@SEARCH@).*$';
+	const REGEXP_IDS_PICKUP = '^(?:[a-zA-Z]+\s+\d+)\s+(?:[0-9]{2}:[0-9]{2}:[0-9]{2})\s+(?:@SERVER@)\s+(?:@DAEMON_PICKUP@)\[\d+\]:\s+(?P<id>[A-Z0-9]+):\s+.*from=\<(?:@SEARCH@)\>.*$';
+	const REGEXP_IDS_CLEANUP = '^(?:[a-zA-Z]+\s+\d+)\s+(?:[0-9]{2}:[0-9]{2}:[0-9]{2})\s+(?:@SERVER@)\s+(?:@DAEMON_CLEANUP@)\[\d+\]:\s+(?P<id>[A-Z0-9]+):\s+message-id=\<[^ ]+@(?:@SEARCH@)\>.*$';
+	const REGEXP_IDS_OPENDKIM = '^(?:[a-zA-Z]+\s+\d+)\s+(?:[0-9]{2}:[0-9]{2}:[0-9]{2})\s+(?:@SERVER@)\s+(?:@DAEMON_OPENDKIM@)\[\d+\]:\s+(?P<id>[A-Z0-9]+):\s+.*\(.*(?:@SEARCH@).*\).*$';
+	const REGEXP_IDS_QMGR = '^(?:[a-zA-Z]+\s+\d+)\s+(?:[0-9]{2}:[0-9]{2}:[0-9]{2})\s+(?:@SERVER@)\s+(?:@DAEMON_QMGR@)\[\d+\]:\s+(?P<id>[A-Z0-9]+):\s+.*from=\<(?:@SEARCH@)\>.*$';
 
 	const REGEXP_SOURCE = '^.+\s+@DAEMON_CLEANUP@\[\d+\]:\s+@ID@:\s+.*message-id=\<[^ ]+@(?P<source>[^ ]+)\>.*$';
 	const REGEXP_FROM = '^.+\s+@DAEMON_QMGR@\[\d+\]:\s+@ID@:\s+.*from=\<(?P<email>[^ ]+@[^ ]+)\>,.+$';
