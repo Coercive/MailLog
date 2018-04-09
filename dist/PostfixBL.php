@@ -23,16 +23,16 @@ class PostfixBL
 	const DAEMON_QMGR = 'postfix/qmgr';
 	const DAEMON_SMTP = 'postfix/smtp';
 
-	const REGEXP_IDS_SMTPD = '^(?:[a-zA-Z]+ \d+) (?:[0-9]{2}:[0-9]{2}:[0-9]{2}) (?:@SERVER@) (?:@DAEMON_SMTPD@)\[\d+\]: (?P<id>[A-Z0-9]+): client=(?:@SEARCH@).*$';
-	const REGEXP_IDS_PICKUP = '^(?:[a-zA-Z]+ \d+) (?:[0-9]{2}:[0-9]{2}:[0-9]{2}) (?:@SERVER@) (?:@DAEMON_PICKUP@)\[\d+\]: (?P<id>[A-Z0-9]+): .*from=\<(?:@SEARCH@)\>.*$';
-	const REGEXP_IDS_CLEANUP = '^(?:[a-zA-Z]+ \d+) (?:[0-9]{2}:[0-9]{2}:[0-9]{2}) (?:@SERVER@) (?:@DAEMON_CLEANUP@)\[\d+\]: (?P<id>[A-Z0-9]+): message-id=\<[^ ]+@(?:@SEARCH@)\>.*$';
-	const REGEXP_IDS_OPENDKIM = '^(?:[a-zA-Z]+ \d+) (?:[0-9]{2}:[0-9]{2}:[0-9]{2}) (?:@SERVER@) (?:@DAEMON_OPENDKIM@)\[\d+\]: (?P<id>[A-Z0-9]+): .*\(.*(?:@SEARCH@).*\).*$';
-	const REGEXP_IDS_QMGR = '^(?:[a-zA-Z]+ \d+) (?:[0-9]{2}:[0-9]{2}:[0-9]{2}) (?:@SERVER@) (?:@DAEMON_QMGR@)\[\d+\]: (?P<id>[A-Z0-9]+): .*from=\<(?:@SEARCH@)\>.*$';
+	const REGEXP_IDS_SMTPD = '^(?:[a-zA-Z]+\s\d+)\s+(?:[0-9]{2}:[0-9]{2}:[0-9]{2})\s+(?:@SERVER@)\s+(?:@DAEMON_SMTPD@)\[\d+\]:\s+(?P<id>[A-Z0-9]+):\s+client=(?:@SEARCH@).*$';
+	const REGEXP_IDS_PICKUP = '^(?:[a-zA-Z]+\s\d+)\s+(?:[0-9]{2}:[0-9]{2}:[0-9]{2})\s+(?:@SERVER@)\s+(?:@DAEMON_PICKUP@)\[\d+\]:\s+(?P<id>[A-Z0-9]+):\s+.*from=\<(?:@SEARCH@)\>.*$';
+	const REGEXP_IDS_CLEANUP = '^(?:[a-zA-Z]+\s\d+)\s+(?:[0-9]{2}:[0-9]{2}:[0-9]{2})\s+(?:@SERVER@)\s+(?:@DAEMON_CLEANUP@)\[\d+\]:\s+(?P<id>[A-Z0-9]+):\s+message-id=\<[^ ]+@(?:@SEARCH@)\>.*$';
+	const REGEXP_IDS_OPENDKIM = '^(?:[a-zA-Z]+\s\d+)\s+(?:[0-9]{2}:[0-9]{2}:[0-9]{2})\s+(?:@SERVER@)\s+(?:@DAEMON_OPENDKIM@)\[\d+\]:\s+(?P<id>[A-Z0-9]+):\s+.*\(.*(?:@SEARCH@).*\).*$';
+	const REGEXP_IDS_QMGR = '^(?:[a-zA-Z]+\s\d+)\s+(?:[0-9]{2}:[0-9]{2}:[0-9]{2})\s+(?:@SERVER@)\s+(?:@DAEMON_QMGR@)\[\d+\]:\s+(?P<id>[A-Z0-9]+):\s+.*from=\<(?:@SEARCH@)\>.*$';
 
-	const REGEXP_SOURCE = '^.+ @DAEMON_CLEANUP@\[\d+\]: @ID@: .*message-id=\<[^ ]+@(?P<source>[^ ]+)\>.*$';
-	const REGEXP_FROM = '^.+ @DAEMON_QMGR@\[\d+\]: @ID@: .*from=\<(?P<email>[^ ]+@[^ ]+)\>,.+$';
-	const REGEXP_SEND = '^.+ @DAEMON_SMTP@\[\d+\]: @ID@:.* to=\<(?P<to>[^ ]+@[^ ]+)\>, (?:orig_to=\<(?P<orig_to>[^ ]+@[^ ]+)\>, )?.*status=(?P<status>[a-z]+) .*$';
-	const REGEXP_END = '^.+ @DAEMON_QMGR@\[\d+\]: @ID@:.* removed$';
+	const REGEXP_SOURCE = '^.+\s+@DAEMON_CLEANUP@\[\d+\]:\s+@ID@:\s+.*message-id=\<[^ ]+@(?P<source>[^ ]+)\>.*$';
+	const REGEXP_FROM = '^.+\s+@DAEMON_QMGR@\[\d+\]:\s+@ID@:\s+.*from=\<(?P<email>[^ ]+@[^ ]+)\>,.+$';
+	const REGEXP_SEND = '^.+\s+@DAEMON_SMTP@\[\d+\]:\s+@ID@:.*\s+to=\<(?P<to>[^ ]+@[^ ]+)\>,\s+(?:orig_to=\<(?P<orig_to>[^ ]+@[^ ]+)\>,\s+)?.*status=(?P<status>[a-z]+)\s+.*$';
+	const REGEXP_END = '^.+\s+@DAEMON_QMGR@\[\d+\]:\s+@ID@:.*\s+removed$';
 
 	const STATUS_SENT = 'sent';
 	const STATUS_DEFERED = 'defered';
